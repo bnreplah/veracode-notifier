@@ -1,0 +1,1 @@
+So far the only thing of interest is a Slack integration via a webhook
