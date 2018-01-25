@@ -1,10 +1,13 @@
 import os
 import requests
 import json
+from veracodenotifier.helpers.base_notification import Notification
 
 
-def send_notification(event):
-    if event is not None:
-        slack_webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
+class SlackNotification(Notification):
+    def __init__(self):
+        self.slack_webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
+
+    def send_notification(self, event):
         payload = {"text": ": ".join(event.values())}
-        requests.post(slack_webhook_url, data=json.dumps(payload))
+        requests.post(self.slack_webhook_url, data=json.dumps(payload))

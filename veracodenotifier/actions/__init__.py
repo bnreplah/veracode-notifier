@@ -1,4 +1,8 @@
-from . import application_profile
-from . import build
-from . import policy
-from . import user
+import os
+import importlib
+
+
+for module in os.listdir(os.path.dirname(__file__)):
+    if module == '__init__.py' or module[-3:] != '.py':
+        continue
+    importlib.import_module("."+module[:-3], __name__)
