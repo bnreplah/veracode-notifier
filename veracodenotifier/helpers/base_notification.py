@@ -10,5 +10,5 @@ class Notification(ABC):
         cls.notifications.append(cls())
 
     @abstractmethod
-    def send_notification(self):
+    def send_notification(self, event):
         pass

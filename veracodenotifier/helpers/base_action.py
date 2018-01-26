@@ -10,13 +10,13 @@ class Action(ABC):
         cls.actions.append(cls())
 
     @abstractmethod
-    def pre_action(self):
+    def pre_action(self, api):
         pass
 
     @abstractmethod
-    def action(self):
+    def action(self, api):
         pass
 
     @abstractmethod
-    def post_action(self):
+    def post_action(self, api):
         pass
