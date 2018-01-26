@@ -3,7 +3,7 @@ from veracodenotifier.helpers import tools
 from veracodenotifier.helpers.base_action import Action
 
 
-class NewApplicationProfileAction(Action):
+class NewApplicationProfilesAction(Action):
     def __init__(self):
         self.save_directory = os.path.join(os.getcwd(), "saved_data", os.path.basename(__file__))[:-3]
         self.saved_application_profiles_file = os.path.join(self.save_directory, "application_profiles.xml")
