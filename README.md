@@ -1,3 +1,25 @@
+# Install
+
+    git clone https://github.com/ctcampbell/veracode-notifier.git
+
+Install Veracode module veracode-api-signing (speak to your Veracode Solution Architect for this file)
+
+    pip install veracode_api_signing-17.0.0-py2.py3-none-any.whl
+
+API credentials must be enabled on a Veracode account and placed in `~/.veracode/credentials`
+
+    [default]
+    veracode_api_key_id = <YOUR_API_KEY_ID>
+    veracode_api_key_secret = <YOUR_API_KEY_SECRET>
+
+File permissions should be set appropriately
+
+    chmod 600 ~/.veracode/credentials
+
+Install other dependencies
+
+    pip install -r requirements.txt
+
 # Usage
 
 In the example Slack notification the webhook URL is read from environment variables, so one way to run the app would be:
