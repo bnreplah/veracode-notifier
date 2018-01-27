@@ -18,7 +18,7 @@ from .exceptions import VeracodeAPIError
 
 class VeracodeAPI:
     def __init__(self, proxies=None):
-        self.baseurl = "https://analysiscenter.veracode.com/api/5.0/"
+        self.baseurl = "https://analysiscenter.veracode.com/api"
         requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
         self.proxies = proxies
 
@@ -42,15 +42,20 @@ class VeracodeAPI:
 
     def get_app_list(self):
         """Returns all application profiles."""
-        return self._get_request(self.baseurl + "getapplist.do")
+        return self._get_request(self.baseurl + "/5.0/getapplist.do")
+
+    def get_app_builds(self):
+        """Returns all builds."""
+        return self._get_request(self.baseurl + "/4.0/getappbuilds.do", params={"include_in_progress": True,
+                                                                                "report_changed_since": "01/01/1970"})
 
     def get_app_info(self, app_id):
         """Returns application profile info for a given app ID."""
-        return self._get_request(self.baseurl + "getappinfo.do", params={"app_id": app_id})
+        return self._get_request(self.baseurl + "/5.0/getappinfo.do", params={"app_id": app_id})
 
     def get_sandbox_list(self, app_id):
         """Returns a list of sandboxes for a given app ID"""
-        return self._get_request(self.baseurl + "getsandboxlist.do", params={"app_id": app_id})
+        return self._get_request(self.baseurl + "/5.0/getsandboxlist.do", params={"app_id": app_id})
 
     def get_build_list(self, app_id, sandbox_id=None):
         """Returns all builds for a given app ID."""
@@ -58,7 +63,7 @@ class VeracodeAPI:
             params = {"app_id": app_id}
         else:
             params = {"app_id": app_id, "sandbox_id": sandbox_id}
-        return self._get_request(self.baseurl + "getbuildlist.do", params=params)
+        return self._get_request(self.baseurl + "/5.0/getbuildlist.do", params=params)
     
     def get_build_info(self, app_id, build_id, sandbox_id=None):
         """Returns build info for a given build ID."""
@@ -66,20 +71,20 @@ class VeracodeAPI:
             params = {"app_id": app_id, "build_id": build_id}
         else:
             params = {"app_id": app_id, "build_id": build_id, "sandbox_id": sandbox_id}
-        return self._get_request(self.baseurl + "getbuildinfo.do", params=params)
+        return self._get_request(self.baseurl + "/5.0/getbuildinfo.do", params=params)
 
     def get_detailed_report(self, build_id):
         """Returns a detailed report for a given build ID."""
-        return self._get_request(self.baseurl + "detailedreport.do", params={"build_id": build_id})
+        return self._get_request(self.baseurl + "/5.0/detailedreport.do", params={"build_id": build_id})
 
     def get_policy_list(self):
         """Returns all policies."""
-        return self._get_request(self.baseurl + "getpolicylist.do")
+        return self._get_request(self.baseurl + "/5.0/getpolicylist.do")
 
     def get_user_list(self):
         """Returns all user accounts."""
-        return self._get_request(self.baseurl + "getuserlist.do")
+        return self._get_request(self.baseurl + "/5.0/getuserlist.do")
 
     def get_user_info(self, username):
         """Returns user info for a given username."""
-        return self._get_request(self.baseurl + "getuserinfo.do", params={"username": username})
+        return self._get_request(self.baseurl + "/5.0/getuserinfo.do", params={"username": username})

@@ -19,7 +19,7 @@ class DeletedApplicationProfilesAction(Action):
         events = []
         self.latest_application_profiles_xml = api.get_app_list()
         latest_application_profiles = tools.parse_and_remove_xml_namespaces(self.latest_application_profiles_xml).findall("app")
-        application_profiles_deleted = tools.diff(self.saved_application_profiles, latest_application_profiles, "app_name")
+        application_profiles_deleted = tools.diff(self.saved_application_profiles, latest_application_profiles, "app_id")
         for app in application_profiles_deleted:
             events.append({"type": "delete", "message": "Application profile deleted: " + app.attrib["app_name"]})
         return events

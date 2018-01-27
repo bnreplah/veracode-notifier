@@ -19,7 +19,7 @@ class NewApplicationProfilesAction(Action):
         events = []
         self.latest_application_profiles_xml = api.get_app_list()
         latest_application_profiles = tools.parse_and_remove_xml_namespaces(self.latest_application_profiles_xml).findall("app")
-        application_profiles_created = tools.diff(latest_application_profiles, self.saved_application_profiles, "app_name")
+        application_profiles_created = tools.diff(latest_application_profiles, self.saved_application_profiles, "app_id")
         for app in application_profiles_created:
             events.append({"type": "create", "message": "Application profile created: " + app.attrib["app_name"]})
         return events
