@@ -21,6 +21,7 @@ def main():
 
     s3 = boto3.client('s3')
     s3_bucket_name = "veracode-notifier-" + os.environ.get("VID")
+    s3_region = os.environ.get("S3_REGION")
     try:
         s3.head_bucket(Bucket=s3_bucket_name)
     except botocore.exceptions.ClientError as e:
@@ -28,7 +29,7 @@ def main():
         # If it was a 404 error, then the bucket does not exist.
         error_code = int(e.response['Error']['Code'])
         if error_code == 404:
-            s3.create_bucket(Bucket=s3_bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
+            s3.create_bucket(Bucket=s3_bucket_name, CreateBucketConfiguration={"LocationConstraint": s3_region})
 
     events = []
 
