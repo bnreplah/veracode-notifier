@@ -1,41 +1,58 @@
+import os
 import time
+import boto3
+import botocore
 from datetime import datetime
-from veracodenotifier import actions
-from veracodenotifier import notifications
-from veracodenotifier.helpers.base_action import Action
-from veracodenotifier.helpers.base_notification import Notification
-from veracodenotifier.helpers.api import VeracodeAPI
+import actions
+import notifications
+from helpers.base_action import Action
+from helpers.base_notification import Notification
+from helpers.api import VeracodeAPI
 
 
-def dateprint(string):
+def date_print(string):
     now = datetime.utcnow().strftime("[%Y-%m-%d %H:%M:%S UTC]")
     print(now + " " + string)
 
 
 def main():
-    dateprint("Starting...")
+    date_print("Starting...")
     api = VeracodeAPI()
 
+    s3 = boto3.client('s3')
+    s3_bucket_name = "veracode-notifier-" + os.environ.get("VID")
     try:
-        while True:
-            events = []
+        s3.head_bucket(Bucket=s3_bucket_name)
+    except botocore.exceptions.ClientError as e:
+        # If a client error is thrown, then check that it was a 404 error.
+        # If it was a 404 error, then the bucket does not exist.
+        error_code = int(e.response['Error']['Code'])
+        if error_code == 404:
+            s3.create_bucket(Bucket=s3_bucket_name, CreateBucketConfiguration={'LocationConstraint': 'eu-west-2'})
 
-            dateprint("Running actions...")
-            for action_class in Action.actions:
-                action_class.pre_action(api)
-                events.extend(action_class.action(api))
-                action_class.post_action(api)
+    events = []
 
-            dateprint("Running notifications...")
-            for notification_class in Notification.notifications:
-                for event in events:
-                    notification_class.send_notification(event)
+    date_print("Running actions...")
+    for action_class in Action.actions:
+        action_class.pre_action(api, s3, s3_bucket_name)
+        events.extend(action_class.action(api, s3, s3_bucket_name))
+        action_class.post_action(api, s3, s3_bucket_name)
 
-            time.sleep(500)
+    date_print("Running notifications...")
+    for notification_class in Notification.notifications:
+        for event in events:
+            notification_class.send_notification(event)
 
-    except KeyboardInterrupt:
-        dateprint("Exiting...")
+
+def lambda_handler(event, context):
+    main()
+    date_print("Exiting...")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        while True:
+            main()
+            time.sleep(300)
+    except KeyboardInterrupt:
+        date_print("Exiting...")

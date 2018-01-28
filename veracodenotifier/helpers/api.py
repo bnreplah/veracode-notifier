@@ -8,6 +8,7 @@
 #
 #           and file permission set appropriately (chmod 600)
 
+import os
 import requests
 import logging
 from requests.adapters import HTTPAdapter
@@ -21,10 +22,12 @@ class VeracodeAPI:
         self.baseurl = "https://analysiscenter.veracode.com/api"
         requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
         self.proxies = proxies
+        self.api_key_id = os.environ.get("VID")
+        self.api_key_secret = os.environ.get("VKEY")
 
     def _get_request(self, url, params=None):
         try:
-            r = requests.get(url, auth=RequestsAuthPluginVeracodeHMAC(), params=params, proxies=self.proxies)
+            r = requests.get(url, auth=RequestsAuthPluginVeracodeHMAC(self.api_key_id, self.api_key_secret), params=params, proxies=self.proxies)
             if 200 >= r.status_code <= 299:
                 if r.content is None:
                     logging.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
@@ -44,10 +47,11 @@ class VeracodeAPI:
         """Returns all application profiles."""
         return self._get_request(self.baseurl + "/5.0/getapplist.do")
 
-    def get_app_builds(self):
+    def get_app_builds(self, report_changed_since):
         """Returns all builds."""
-        return self._get_request(self.baseurl + "/4.0/getappbuilds.do", params={"include_in_progress": True,
-                                                                                "report_changed_since": "01/01/1970"})
+        return self._get_request(self.baseurl + "/4.0/getappbuilds.do", params={"only_latest": False,
+                                                                                "include_in_progress": True,
+                                                                                "report_changed_since": report_changed_since})
 
     def get_app_info(self, app_id):
         """Returns application profile info for a given app ID."""
