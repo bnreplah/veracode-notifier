@@ -8,9 +8,9 @@ class SlackNotification(Notification):
     def __init__(self):
         self.slack_webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
         self.colours = {
-            "create": "#00AA00",
-            "update": "0000AA",
-            "delete": "AA0000"
+            "create": "#8FBC48",
+            "update": "00B3E6",
+            "delete": "D73185"
         }
 
     def send_notification(self, event):

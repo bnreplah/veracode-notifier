@@ -16,8 +16,10 @@ class NewBuildsAction(Action):
             saved_application_builds_xml = saved_application_builds_object["Body"].read()
             self.last_run_date = saved_application_builds_object["LastModified"].strftime('%m/%d/%Y')
             self.saved_application_builds = tools.parse_and_remove_xml_namespaces(saved_application_builds_xml).findall("application/build")
+            return True
         except s3client.exceptions.NoSuchKey:
-            pass
+            self.latest_application_builds_xml = api.get_app_builds(self.last_run_date)
+            return False
 
     def action(self, api, s3client, s3bucket):
         events = []

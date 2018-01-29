@@ -13,8 +13,10 @@ class DeletedApplicationProfilesAction(Action):
         try:
             saved_application_profiles_xml = s3client.get_object(Bucket=s3bucket, Key=self.file_name)["Body"].read()
             self.saved_application_profiles = tools.parse_and_remove_xml_namespaces(saved_application_profiles_xml).findall("app")
+            return True
         except s3client.exceptions.NoSuchKey:
-            pass
+            self.latest_application_profiles_xml = api.get_app_list()
+            return False
 
     def action(self, api, s3client, s3bucket):
         events = []
