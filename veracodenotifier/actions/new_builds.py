@@ -29,11 +29,13 @@ class NewBuildsAction(Action):
         for build in application_builds_created:
             message = {
                 "simple": "Build Created." +
+                          "\nBuild ID: " + build.attrib["build_id"] +
                           "\nSubmitter: " + build.attrib["submitter"] +
                           "\nScan name: " + build.attrib["version"] +
                           "\nResults ready: " + build.attrib["results_ready"],
                 "title": "Build Created",
-                "text": "Submitter: " + build.attrib["submitter"] +
+                "text": "\nBuild ID: " + build.attrib["build_id"] +
+                        "\nSubmitter: " + build.attrib["submitter"] +
                         "\nScan name: " + build.attrib["version"] +
                         "\nResults ready: " + build.attrib["results_ready"]
             }

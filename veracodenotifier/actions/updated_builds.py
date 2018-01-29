@@ -31,11 +31,13 @@ class UpdatedBuildsAction(Action):
                         and latest_build.attrib["results_ready"] != saved_build.attrib["results_ready"]:
                     message = {
                         "simple": "Build Updated." +
+                                  "\nBuild ID: " + latest_build.attrib["build_id"] +
                                   "\nSubmitter: " + latest_build.attrib["submitter"] +
                                   "\nScan name: " + latest_build.attrib["version"] +
                                   "\nResults ready: " + latest_build.attrib["results_ready"],
                         "title": "Build Updated",
-                        "text": "Submitter: " + latest_build.attrib["submitter"] +
+                        "text": "\nBuild ID: " + latest_build.attrib["build_id"] +
+                                "\nSubmitter: " + latest_build.attrib["submitter"] +
                                 "\nScan name: " + latest_build.attrib["version"] +
                                 "\nResults ready: " + latest_build.attrib["results_ready"]
                     }

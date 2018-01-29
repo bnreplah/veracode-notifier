@@ -185,3 +185,14 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+/veracodenotifier/chardet/
+/veracodenotifier/httpie/
+/veracodenotifier/pygments/
+/veracodenotifier/pytz/
+/veracodenotifier/urllib3/
+/veracodenotifier/idna/
+/veracodenotifier/certifi/
+/veracodenotifier/docopt.py
+/veracodenotifier/veracode_api_signing/
+/veracodenotifier/requests/
+/publish.sh
