@@ -19,8 +19,7 @@ class SlackNotification(Notification):
                     {
                         "fallback": event["message"]["simple"],
                         "title": event["message"]["title"],
-                        "title_link": "https://analysiscenter.veracode.com/",
-                        "text": event["message"]["text"],
+                        "text": "```" + event["message"]["text"] + "```",
                         "color": self.colours[event["type"]]
                     }
             ]

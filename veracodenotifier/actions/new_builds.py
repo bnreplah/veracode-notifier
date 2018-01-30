@@ -30,13 +30,13 @@ class NewBuildsAction(Action):
             message = {
                 "simple": "Build Created." +
                           "\nBuild ID: " + build.attrib["build_id"] +
+                          "\nName: " + build.attrib["version"] +
                           "\nSubmitter: " + build.attrib["submitter"] +
-                          "\nScan name: " + build.attrib["version"] +
                           "\nResults ready: " + build.attrib["results_ready"],
                 "title": "Build Created",
                 "text": "\nBuild ID: " + build.attrib["build_id"] +
+                        "\nName: " + build.attrib["version"] +
                         "\nSubmitter: " + build.attrib["submitter"] +
-                        "\nScan name: " + build.attrib["version"] +
                         "\nResults ready: " + build.attrib["results_ready"]
             }
             events.append({"type": "create", "message": message})

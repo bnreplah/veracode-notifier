@@ -32,13 +32,13 @@ class UpdatedBuildsAction(Action):
                     message = {
                         "simple": "Build Updated." +
                                   "\nBuild ID: " + latest_build.attrib["build_id"] +
+                                  "\nName: " + latest_build.attrib["version"] +
                                   "\nSubmitter: " + latest_build.attrib["submitter"] +
-                                  "\nScan name: " + latest_build.attrib["version"] +
                                   "\nResults ready: " + latest_build.attrib["results_ready"],
                         "title": "Build Updated",
                         "text": "\nBuild ID: " + latest_build.attrib["build_id"] +
+                                "\nName: " + latest_build.attrib["version"] +
                                 "\nSubmitter: " + latest_build.attrib["submitter"] +
-                                "\nScan name: " + latest_build.attrib["version"] +
                                 "\nResults ready: " + latest_build.attrib["results_ready"]
                     }
                     events.append({"type": "update", "message": message})
