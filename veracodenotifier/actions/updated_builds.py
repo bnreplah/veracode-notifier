@@ -24,22 +24,22 @@ class UpdatedBuildsAction(Action):
     def action(self, api, s3client, s3bucket):
         events = []
         self.latest_application_builds_xml = api.get_app_builds(self.last_run_date)
-        latest_application_builds = tools.parse_and_remove_xml_namespaces(self.latest_application_builds_xml).findall("application/build")
+        latest_application_builds_list = tools.parse_and_remove_xml_namespaces(self.latest_application_builds_xml)
+        latest_application_builds = latest_application_builds_list.findall("application/build")
         for latest_build in latest_application_builds:
             for saved_build in self.saved_application_builds:
                 if latest_build.attrib["build_id"] == saved_build.attrib["build_id"] \
                         and latest_build.attrib["results_ready"] != saved_build.attrib["results_ready"]:
+                    app = latest_application_builds_list.find('.//build[@build_id="' + latest_build.attrib["build_id"] + '"]...')
+                    title = app.attrib["app_name"] + " build updated"
+                    text = "\nBuild ID: " + latest_build.attrib["build_id"] + \
+                           "\nName: " + latest_build.attrib["version"] + \
+                           "\nSubmitter: " + latest_build.attrib["submitter"] + \
+                           "\nResults ready: " + latest_build.attrib["results_ready"]
                     message = {
-                        "simple": "Build Updated." +
-                                  "\nBuild ID: " + latest_build.attrib["build_id"] +
-                                  "\nName: " + latest_build.attrib["version"] +
-                                  "\nSubmitter: " + latest_build.attrib["submitter"] +
-                                  "\nResults ready: " + latest_build.attrib["results_ready"],
-                        "title": "Build Updated",
-                        "text": "\nBuild ID: " + latest_build.attrib["build_id"] +
-                                "\nName: " + latest_build.attrib["version"] +
-                                "\nSubmitter: " + latest_build.attrib["submitter"] +
-                                "\nResults ready: " + latest_build.attrib["results_ready"]
+                        "simple": title + text,
+                        "title": title,
+                        "text": text
                     }
                     events.append({"type": "update", "message": message})
         return events

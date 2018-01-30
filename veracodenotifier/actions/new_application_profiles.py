@@ -25,10 +25,12 @@ class NewApplicationProfilesAction(Action):
         application_profiles_created = tools.diff(latest_application_profiles, self.saved_application_profiles, "app_id")
         for app in application_profiles_created:
             message = {
-                "simple": "Application Profile Created." +
+                "simple": "Application profile created" +
+                          "\nApp ID: " + app.attrib["app_id"] +
                           "\nName: " + app.attrib["app_name"],
-                "title": "Application Profile Created",
-                "text": "Name: " + app.attrib["app_name"]
+                "title": "Application profile created",
+                "text": "App ID: " + app.attrib["app_id"] +
+                        "\nName: " + app.attrib["app_name"]
             }
             events.append({"type": "create", "message": message})
         return events

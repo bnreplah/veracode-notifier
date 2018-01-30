@@ -24,20 +24,20 @@ class NewBuildsAction(Action):
     def action(self, api, s3client, s3bucket):
         events = []
         self.latest_application_builds_xml = api.get_app_builds(self.last_run_date)
-        latest_application_builds = tools.parse_and_remove_xml_namespaces(self.latest_application_builds_xml).findall("application/build")
+        latest_application_builds_list = tools.parse_and_remove_xml_namespaces(self.latest_application_builds_xml)
+        latest_application_builds = latest_application_builds_list.findall("application/build")
         application_builds_created = tools.diff(latest_application_builds, self.saved_application_builds, "build_id")
         for build in application_builds_created:
+            app = latest_application_builds_list.find('.//build[@build_id="' + build.attrib["build_id"] + '"]...')
+            title = app.attrib["app_name"] + " build created"
+            text = "\nBuild ID: " + build.attrib["build_id"] + \
+                   "\nName: " + build.attrib["version"] + \
+                   "\nSubmitter: " + build.attrib["submitter"] + \
+                   "\nResults ready: " + build.attrib["results_ready"]
             message = {
-                "simple": "Build Created." +
-                          "\nBuild ID: " + build.attrib["build_id"] +
-                          "\nName: " + build.attrib["version"] +
-                          "\nSubmitter: " + build.attrib["submitter"] +
-                          "\nResults ready: " + build.attrib["results_ready"],
-                "title": "Build Created",
-                "text": "\nBuild ID: " + build.attrib["build_id"] +
-                        "\nName: " + build.attrib["version"] +
-                        "\nSubmitter: " + build.attrib["submitter"] +
-                        "\nResults ready: " + build.attrib["results_ready"]
+                "simple": title + text,
+                "title": title,
+                "text": text
             }
             events.append({"type": "create", "message": message})
         return events
