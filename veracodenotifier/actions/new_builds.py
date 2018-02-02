@@ -30,8 +30,8 @@ class NewBuildsAction(Action):
         for build in application_builds_created:
             app = latest_application_builds_list.find('.//build[@build_id="' + build.attrib["build_id"] + '"]...')
             title = app.attrib["app_name"] + " build created"
-            text = "\nBuild ID: " + build.attrib["build_id"] + \
-                   "\nName: " + build.attrib["version"] + \
+            text = "\nName: " + build.attrib["version"] + \
+                   "\nBuild ID: " + build.attrib["build_id"] + \
                    "\nSubmitter: " + build.attrib["submitter"] + \
                    "\nStatus: " + build.find("analysis_unit").attrib["status"]
             message = {

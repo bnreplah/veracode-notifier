@@ -34,8 +34,8 @@ class UpdatedBuildsAction(Action):
                         saved_build.find("analysis_unit").attrib["status"]:
                     app = latest_application_builds_list.find('.//build[@build_id="' + latest_build.attrib["build_id"] + '"]...')
                     title = app.attrib["app_name"] + " build updated"
-                    text = "\nBuild ID: " + latest_build.attrib["build_id"] + \
-                           "\nName: " + latest_build.attrib["version"] + \
+                    text = "\nName: " + latest_build.attrib["version"] + \
+                           "\nBuild ID: " + latest_build.attrib["build_id"] + \
                            "\nSubmitter: " + latest_build.attrib["submitter"] + \
                            "\nStatus: " + latest_build.find("analysis_unit").attrib["status"]
                     message = {
