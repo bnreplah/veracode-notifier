@@ -15,7 +15,8 @@ class UpdatedBuildsAction(Action):
             saved_application_builds_object = s3client.get_object(Bucket=s3bucket, Key=self.file_name)
             saved_application_builds_xml = saved_application_builds_object["Body"].read()
             self.last_run_date = saved_application_builds_object["LastModified"].strftime('%m/%d/%Y')
-            self.saved_application_builds = tools.parse_and_remove_xml_namespaces(saved_application_builds_xml).findall("application/build")
+            self.saved_application_builds = \
+                tools.parse_and_remove_xml_namespaces(saved_application_builds_xml).findall("application/build")
             return True
         except s3client.exceptions.NoSuchKey:
             self.latest_application_builds_xml = api.get_app_builds(self.last_run_date)
@@ -29,13 +30,14 @@ class UpdatedBuildsAction(Action):
         for latest_build in latest_application_builds:
             for saved_build in self.saved_application_builds:
                 if latest_build.attrib["build_id"] == saved_build.attrib["build_id"] \
-                        and latest_build.attrib["results_ready"] != saved_build.attrib["results_ready"]:
+                        and latest_build.find("analysis_unit").attrib["status"] != \
+                        saved_build.find("analysis_unit").attrib["status"]:
                     app = latest_application_builds_list.find('.//build[@build_id="' + latest_build.attrib["build_id"] + '"]...')
                     title = app.attrib["app_name"] + " build updated"
                     text = "\nBuild ID: " + latest_build.attrib["build_id"] + \
                            "\nName: " + latest_build.attrib["version"] + \
                            "\nSubmitter: " + latest_build.attrib["submitter"] + \
-                           "\nResults ready: " + latest_build.attrib["results_ready"]
+                           "\nStatus: " + latest_build.find("analysis_unit").attrib["status"]
                     message = {
                         "simple": title + text,
                         "title": title,

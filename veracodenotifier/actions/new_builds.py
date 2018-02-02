@@ -33,7 +33,7 @@ class NewBuildsAction(Action):
             text = "\nBuild ID: " + build.attrib["build_id"] + \
                    "\nName: " + build.attrib["version"] + \
                    "\nSubmitter: " + build.attrib["submitter"] + \
-                   "\nResults ready: " + build.attrib["results_ready"]
+                   "\nStatus: " + build.find("analysis_unit").attrib["status"]
             message = {
                 "simple": title + text,
                 "title": title,
