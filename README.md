@@ -2,30 +2,42 @@
 
     git clone https://github.com/ctcampbell/veracode-notifier.git
 
-Install Veracode module veracode-api-signing (speak to your Veracode Solution Architect for this file)
-
-    pip install veracode_api_signing-17.0.0-py2.py3-none-any.whl
-
-API credentials must be enabled on a Veracode account and placed in `~/.veracode/credentials`
-
-    [default]
-    veracode_api_key_id = <YOUR_API_KEY_ID>
-    veracode_api_key_secret = <YOUR_API_KEY_SECRET>
-
-File permissions should be set appropriately
-
-    chmod 600 ~/.veracode/credentials
-
-Install other dependencies
+Install dependencies (in a virtualenv)
 
     pip install -r requirements.txt
 
 # Usage
 
-In the example Slack notification the webhook URL is read from environment variables, so one way to run the app would be:
+The project is designed to be deployed into AWS as a Lambda function. [Set up your AWS credentials first](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/).
 
-    cd veracode-notifier/
-    SLACK_WEBHOOK_URL=<your_slack_webhook_url> python -m veracodenotifier.main
+To use Zappa to deploy, create a `zappa_settings.json` file in the root directory:
+
+```json
+{
+    "production": {
+        "aws_region": "<YOUR-PREFERRED-AWS-REGION>",
+        "profile_name": "default",
+        "project_name": "veracode-notifier",
+        "runtime": "python3.6",
+        "s3_bucket": "veracode-notifier-<YOUR-VERACODE-API-KEY-ID>",
+        "apigateway_enabled": false,
+        "timeout_seconds": 300,
+        "keep_warm": false,
+        "events": [{
+            "function": "veracodenotifier.main.lambda_handler",
+            "expression": "rate(1 minute)"
+        }],
+        "aws_environment_variables": {
+            "VERACODE_API_KEY_ID": "<YOUR-VERACODE-API-KEY-ID>",
+            "VERACODE_API_KEY_SECRET": "<YOUR-VERACODE-API-KEY-SECRET>",
+            "S3_REGION": "<YOUR-PREFERRED-AWS-REGION>",
+            "SLACK_WEBHOOK_URL": "<YOUR-SLACK-INCOMING-WEBHOOK-URL>"
+        }
+    }
+}
+``` 
+
+Then run `zappa deploy production` to configure in AWS. The config above will run the Lambda once a minute.
     
 # Development
 

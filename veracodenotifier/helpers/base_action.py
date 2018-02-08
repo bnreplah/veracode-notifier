@@ -10,13 +10,13 @@ class Action(ABC):
         cls.actions.append(cls())
 
     @abstractmethod
-    def pre_action(self, api):
+    def pre_action(self, api, s3client, s3bucket):
         pass
 
     @abstractmethod
-    def action(self, api):
+    def action(self, api, s3client, s3bucket):
         pass
 
     @abstractmethod
-    def post_action(self, api):
+    def post_action(self, api, s3client, s3bucket):
         pass

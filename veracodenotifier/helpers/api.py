@@ -1,30 +1,28 @@
 # Purpose:  API utilities
-#
-# Notes:    API credentials must be enabled on Veracode account and placed in ~/.veracode/credentials like
-#
-#           [default]
-#           veracode_api_key_id = <YOUR_API_KEY_ID>
-#           veracode_api_key_secret = <YOUR_API_KEY_SECRET>
-#
-#           and file permission set appropriately (chmod 600)
 
-import requests
 import logging
+import requests
+from urllib.parse import urlparse
 from requests.adapters import HTTPAdapter
-
-from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 from .exceptions import VeracodeAPIError
+from .api_hmac import generate_veracode_hmac_header
 
 
 class VeracodeAPI:
     def __init__(self, proxies=None):
         self.baseurl = "https://analysiscenter.veracode.com/api"
-        requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
         self.proxies = proxies
+        print("API initialised")
 
     def _get_request(self, url, params=None):
         try:
-            r = requests.get(url, auth=RequestsAuthPluginVeracodeHMAC(), params=params, proxies=self.proxies)
+            session = requests.Session()
+            session.mount(self.baseurl, HTTPAdapter(max_retries=3))
+            request = requests.Request("GET", url, params=params)
+            prepared_request = request.prepare()
+            prepared_request.headers["Authorization"] = generate_veracode_hmac_header(urlparse(url).hostname,
+                                                                                      prepared_request.path_url, "GET")
+            r = session.send(prepared_request, proxies=self.proxies)
             if 200 >= r.status_code <= 299:
                 if r.content is None:
                     logging.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
@@ -44,10 +42,11 @@ class VeracodeAPI:
         """Returns all application profiles."""
         return self._get_request(self.baseurl + "/5.0/getapplist.do")
 
-    def get_app_builds(self):
+    def get_app_builds(self, report_changed_since):
         """Returns all builds."""
-        return self._get_request(self.baseurl + "/4.0/getappbuilds.do", params={"include_in_progress": True,
-                                                                                "report_changed_since": "01/01/1970"})
+        return self._get_request(self.baseurl + "/4.0/getappbuilds.do", params={"only_latest": False,
+                                                                                "include_in_progress": True,
+                                                                                "report_changed_since": report_changed_since})
 
     def get_app_info(self, app_id):
         """Returns application profile info for a given app ID."""
