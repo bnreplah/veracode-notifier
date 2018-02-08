@@ -1,33 +1,27 @@
 # Purpose:  API utilities
-#
-# Notes:    API credentials must be enabled on Veracode account and placed in ~/.veracode/credentials like
-#
-#           [default]
-#           veracode_api_key_id = <YOUR_API_KEY_ID>
-#           veracode_api_key_secret = <YOUR_API_KEY_SECRET>
-#
-#           and file permission set appropriately (chmod 600)
 
-import os
-import requests
 import logging
+import requests
+from urllib.parse import urlparse
 from requests.adapters import HTTPAdapter
-
-from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 from .exceptions import VeracodeAPIError
+from .api_hmac import generate_veracode_hmac_header
 
 
 class VeracodeAPI:
     def __init__(self, proxies=None):
         self.baseurl = "https://analysiscenter.veracode.com/api"
-        requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
         self.proxies = proxies
-        self.api_key_id = os.environ.get("VID")
-        self.api_key_secret = os.environ.get("VKEY")
 
     def _get_request(self, url, params=None):
         try:
-            r = requests.get(url, auth=RequestsAuthPluginVeracodeHMAC(self.api_key_id, self.api_key_secret), params=params, proxies=self.proxies)
+            session = requests.Session()
+            session.mount(self.baseurl, HTTPAdapter(max_retries=3))
+            request = requests.Request("GET", url, params=params)
+            prepared_request = request.prepare()
+            prepared_request.headers["Authorization"] = generate_veracode_hmac_header(urlparse(url).hostname,
+                                                                                      prepared_request.path_url, "GET")
+            r = session.send(prepared_request, proxies=self.proxies)
             if 200 >= r.status_code <= 299:
                 if r.content is None:
                     logging.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"

@@ -26,11 +26,11 @@ class NewApplicationProfilesAction(Action):
         for app in application_profiles_created:
             message = {
                 "simple": "Application profile created" +
-                          "\nApp ID: " + app.attrib["app_id"] +
-                          "\nName: " + app.attrib["app_name"],
+                          "\nName: " + app.attrib["app_name"] +
+                          "\nApp ID: " + app.attrib["app_id"],
                 "title": "Application profile created",
-                "text": "App ID: " + app.attrib["app_id"] +
-                        "\nName: " + app.attrib["app_name"]
+                "text": "Name: " + app.attrib["app_name"] +
+                        "\nApp ID: " + app.attrib["app_id"]
             }
             events.append({"type": "create", "message": message})
         return events

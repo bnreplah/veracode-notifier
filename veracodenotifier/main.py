@@ -19,7 +19,7 @@ def main():
     date_print("Starting...")
     api = VeracodeAPI()
 
-    s3_bucket_name = "veracode-notifier-" + os.environ.get("VID")
+    s3_bucket_name = "veracode-notifier-" + os.environ.get("VERACODE_API_KEY_ID")
     s3_region = os.environ.get("S3_REGION")
     s3 = boto3.client('s3')
     try:
