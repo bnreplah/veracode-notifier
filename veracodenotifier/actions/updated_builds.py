@@ -10,19 +10,19 @@ class UpdatedBuildsAction(Action):
         self.latest_application_builds_xml = b""
         self.last_run_date = "01/01/1970"
 
-    def pre_action(self, api, s3client, s3bucket):
+    def pre_action(self, api, s3_client, s3_bucket):
         try:
-            saved_application_builds_object = s3client.get_object(Bucket=s3bucket, Key=self.file_name)
+            saved_application_builds_object = s3_client.get_object(Bucket=s3_bucket, Key=self.file_name)
             saved_application_builds_xml = saved_application_builds_object["Body"].read()
             self.last_run_date = saved_application_builds_object["LastModified"].strftime('%m/%d/%Y')
             self.saved_application_builds = \
                 tools.parse_and_remove_xml_namespaces(saved_application_builds_xml).findall("application/build")
             return True
-        except s3client.exceptions.NoSuchKey:
+        except s3_client.exceptions.NoSuchKey:
             self.latest_application_builds_xml = api.get_app_builds(self.last_run_date)
             return False
 
-    def action(self, api, s3client, s3bucket):
+    def action(self, api, s3_client, s3_bucket):
         events = []
         self.latest_application_builds_xml = api.get_app_builds(self.last_run_date)
         latest_application_builds_list = tools.parse_and_remove_xml_namespaces(self.latest_application_builds_xml)
@@ -46,5 +46,5 @@ class UpdatedBuildsAction(Action):
                     events.append({"type": "update", "message": message})
         return events
 
-    def post_action(self, api, s3client, s3bucket):
-        s3client.put_object(Bucket=s3bucket, Key=self.file_name, Body=self.latest_application_builds_xml)
+    def post_action(self, api, s3_client, s3_bucket):
+        s3_client.put_object(Bucket=s3_bucket, Key=self.file_name, Body=self.latest_application_builds_xml)

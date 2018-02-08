@@ -15,37 +15,35 @@ def date_print(string):
     print(now + " " + string)
 
 
-def main():
+def main(event, context):
     date_print("Starting...")
+
+    if "S3-BUCKET" in os.environ and "S3-REGION" in os.environ:
+        s3_bucket_name = os.environ.get("S3-BUCKET")
+        s3_region = os.environ.get("S3_REGION")
+        s3_client = boto3.client("s3")
+    else:
+        return
+
     api = VeracodeAPI()
 
-    s3_bucket_name = "veracode-notifier-" + os.environ.get("VERACODE_API_KEY_ID")
-    s3_region = os.environ.get("S3_REGION")
-    s3 = boto3.client('s3')
     try:
-        s3.head_bucket(Bucket=s3_bucket_name)
-    except botocore.exceptions.ClientError as e:
-        error_code = int(e.response['Error']['Code'])
-        if error_code == 404:
-            s3.create_bucket(Bucket=s3_bucket_name, CreateBucketConfiguration={"LocationConstraint": s3_region})
+        s3_client.head_bucket(Bucket=s3_bucket_name)
+    except s3_client.exceptions.NoSuchBucket:
+        s3_client.create_bucket(Bucket=s3_bucket_name, CreateBucketConfiguration={"LocationConstraint": s3_region})
 
     events = []
 
     date_print("Running actions...")
     for action_class in Action.actions:
-        if action_class.pre_action(api, s3, s3_bucket_name):
-            events.extend(action_class.action(api, s3, s3_bucket_name))
-        action_class.post_action(api, s3, s3_bucket_name)
+        if action_class.pre_action(api, s3_client, s3_bucket_name):
+            events.extend(action_class.action(api, s3_client, s3_bucket_name))
+        action_class.post_action(api, s3_client, s3_bucket_name)
 
     date_print("Running notifications...")
     for notification_class in Notification.notifications:
         for event in events:
             notification_class.send_notification(event)
-
-
-def lambda_handler(event, context):
-    main()
-    date_print("Exiting...")
 
 
 if __name__ == "__main__":
