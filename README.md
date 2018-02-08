@@ -19,18 +19,19 @@ To use Zappa to deploy, create a `zappa_settings.json` file in the root director
         "profile_name": "default",
         "project_name": "veracode-notifier",
         "runtime": "python3.6",
-        "s3_bucket": "veracode-notifier-<YOUR-VERACODE-API-KEY-ID>",
+        "s3_bucket": "<YOUR-UNIQUE-S3-BUCKET-NAME>",
         "apigateway_enabled": false,
         "timeout_seconds": 300,
         "keep_warm": false,
         "events": [{
-            "function": "veracodenotifier.main.lambda_handler",
+            "function": "veracodenotifier.main.main",
             "expression": "rate(1 minute)"
         }],
         "aws_environment_variables": {
             "VERACODE_API_KEY_ID": "<YOUR-VERACODE-API-KEY-ID>",
             "VERACODE_API_KEY_SECRET": "<YOUR-VERACODE-API-KEY-SECRET>",
             "S3_REGION": "<YOUR-PREFERRED-AWS-REGION>",
+            "S3-BUCKET": "<YOUR-UNIQUE-S3-BUCKET-NAME>",
             "SLACK_WEBHOOK_URL": "<YOUR-SLACK-INCOMING-WEBHOOK-URL>"
         }
     }
