@@ -39,6 +39,8 @@ To use Zappa to deploy, create a `zappa_settings.json` file in the root director
 ``` 
 
 Then run `zappa deploy production` to configure in AWS. The config above will run the Lambda once a minute.
+
+It's worth pointing out that the default AWS permissions that will be attached to the Lambda are very permissive. You may want to look into the [Zappa docs](https://github.com/Miserlou/Zappa#using-custom-aws-iam-roles-and-policies-for-deployment) to configure something more appropriate.
     
 # Development
 
