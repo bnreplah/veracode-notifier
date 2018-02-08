@@ -31,7 +31,7 @@ To use Zappa to deploy, create a `zappa_settings.json` file in the root director
             "VERACODE_API_KEY_ID": "<YOUR-VERACODE-API-KEY-ID>",
             "VERACODE_API_KEY_SECRET": "<YOUR-VERACODE-API-KEY-SECRET>",
             "S3_REGION": "<YOUR-PREFERRED-AWS-REGION>",
-            "S3-BUCKET": "<YOUR-UNIQUE-S3-BUCKET-NAME>",
+            "S3_BUCKET": "<YOUR-UNIQUE-S3-BUCKET-NAME>",
             "SLACK_WEBHOOK_URL": "<YOUR-SLACK-INCOMING-WEBHOOK-URL>"
         }
     }
