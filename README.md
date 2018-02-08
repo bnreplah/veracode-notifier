@@ -10,7 +10,7 @@ Install dependencies (in a virtualenv)
 
 The project is designed to be deployed into AWS as a Lambda function. [Set up your AWS credentials first](https://aws.amazon.com/blogs/security/a-new-and-standardized-way-to-manage-credentials-in-the-aws-sdks/).
 
-To use Zappa to deploy, create a `zappa_setting.json` file in the root directory:
+To use Zappa to deploy, create a `zappa_settings.json` file in the root directory:
 
 ```json
 {
