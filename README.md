@@ -1,5 +1,3 @@
-# README needs updating for this branch
-
 # Install
 
     git clone https://github.com/ctcampbell/veracode-notifier.git
