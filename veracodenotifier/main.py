@@ -18,9 +18,9 @@ def date_print(string):
 def main(event, context):
     date_print("Starting...")
 
-    if "S3-BUCKET" in os.environ and "S3-REGION" in os.environ:
-        s3_bucket_name = os.environ.get("S3-BUCKET")
+    if "S3_REGION" in os.environ and "S3_BUCKET" in os.environ:
         s3_region = os.environ.get("S3_REGION")
+        s3_bucket_name = os.environ.get("S3_BUCKET")
         s3_client = boto3.client("s3")
     else:
         return
