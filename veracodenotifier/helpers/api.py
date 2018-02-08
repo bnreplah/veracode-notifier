@@ -12,6 +12,7 @@ class VeracodeAPI:
     def __init__(self, proxies=None):
         self.baseurl = "https://analysiscenter.veracode.com/api"
         self.proxies = proxies
+        print("API initialised")
 
     def _get_request(self, url, params=None):
         try:

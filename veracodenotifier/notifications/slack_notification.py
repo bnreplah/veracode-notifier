@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-from helpers.base_notification import Notification
+from veracodenotifier.helpers.base_notification import Notification
 
 
 class SlackNotification(Notification):

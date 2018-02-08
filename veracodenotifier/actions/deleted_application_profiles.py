@@ -1,6 +1,6 @@
 import os
-from helpers import tools
-from helpers.base_action import Action
+from veracodenotifier.helpers import tools
+from veracodenotifier.helpers.base_action import Action
 
 
 class DeletedApplicationProfilesAction(Action):

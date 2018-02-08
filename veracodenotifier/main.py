@@ -3,11 +3,11 @@ import time
 import boto3
 import botocore
 from datetime import datetime
-import actions
-import notifications
-from helpers.base_action import Action
-from helpers.base_notification import Notification
-from helpers.api import VeracodeAPI
+import veracodenotifier.actions
+import veracodenotifier.notifications
+from veracodenotifier.helpers.base_action import Action
+from veracodenotifier.helpers.base_notification import Notification
+from veracodenotifier.helpers.api import VeracodeAPI
 
 
 def date_print(string):
